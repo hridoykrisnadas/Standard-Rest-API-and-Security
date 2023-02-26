@@ -10,9 +10,9 @@ public class URLConstraint {
     public static class ProductManagement {
         public static final String ROOT = API+VERSION;
         public static final String CREATE = "/create";
-        public static final String UPDATE = "/update";
-        public static final String DELETE = "/delete";
-        public static final String GET_DETAILS = "/details";
+        public static final String UPDATE = "/update/{id}";
+        public static final String DELETE = "/delete/{id}";
+        public static final String GET_DETAILS = "/details/{id}";
         public static final String GET_ALL = "/all-products";
     }
 }

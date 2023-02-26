@@ -6,10 +6,12 @@ import com.hridoykrisna.stdapi.model.Product;
 import com.hridoykrisna.stdapi.repository.ProductRepo;
 import com.hridoykrisna.stdapi.service.ProductService;
 import com.hridoykrisna.stdapi.utli.ResponseBuilder;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("ProductService")
@@ -34,21 +36,56 @@ public class ProductServiceIMPL implements ProductService {
 
     @Override
     public ResponseDto update(Long Id, ProductDto productDto) {
-        return null;
+        Product product = productRepo.findByIdAndIsActiveTrue(Id);
+        if (product != null){
+            modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+            modelMapper.map(productDto, product);
+            product = productRepo.save(product);
+            if (product != null){
+                return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Product Update", product);
+            }
+            return ResponseBuilder.getFailureMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+        }
+        return ResponseBuilder.getFailureMessage(HttpStatus.NOT_FOUND, "Not Found!!");
     }
 
     @Override
     public ResponseDto delete(Long Id) {
-        return null;
+        Product product = productRepo.findByIdAndIsActiveTrue(Id);
+        if (product != null){
+            product.setIsActive(false);
+            product = productRepo.save(product);
+            if (product != null){
+                return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Product Deleted", product);
+            }
+            return ResponseBuilder.getFailureMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+        }
+        return ResponseBuilder.getFailureMessage(HttpStatus.NOT_FOUND, "Not Found!!");
     }
 
     @Override
     public ResponseDto getDetails(Long Id) {
-        return null;
+        Product product = productRepo.findByIdAndIsActiveTrue(Id);
+        if (product != null){
+            return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Successful", product);
+        }
+        return ResponseBuilder.getFailureMessage(HttpStatus.NOT_FOUND, "Not Found!!");
     }
 
     @Override
-    public List<ResponseDto> getAll() {
-        return null;
+    public ResponseDto getAll() {
+        List<Product> productList = productRepo.findAllByIsActiveTrue();
+        List<ProductDto> productDtoList = this.getProductDtos(productList);
+        return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Successful", productDtoList);
+    }
+
+    private List<ProductDto> getProductDtos(List<Product> products){
+        List<ProductDto> productDtoList = new ArrayList<>();
+        products.forEach(product -> {
+            modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDtoList.add(productDto);
+        });
+        return productDtoList;
     }
 }
