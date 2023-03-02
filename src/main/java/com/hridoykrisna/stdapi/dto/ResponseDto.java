@@ -1,7 +1,6 @@
 package com.hridoykrisna.stdapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.JoinColumn;
 import lombok.Builder;
 import lombok.Data;
 

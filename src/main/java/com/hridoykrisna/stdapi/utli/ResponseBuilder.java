@@ -2,19 +2,18 @@ package com.hridoykrisna.stdapi.utli;
 
 import com.hridoykrisna.stdapi.dto.ErrorResponseDTO;
 import com.hridoykrisna.stdapi.dto.ResponseDto;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 
-import javax.naming.Binding;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public final class ResponseBuilder {
-    private ResponseBuilder(){}
+    private ResponseBuilder() {
+    }
 
-    private static List<ErrorResponseDTO> getCustomError(BindingResult bindingResult){
+    private static List<ErrorResponseDTO> getCustomError(BindingResult bindingResult) {
         List<ErrorResponseDTO> dtoList = new ArrayList<>();
         bindingResult.getFieldErrors().forEach(fieldError -> {
             ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
@@ -26,7 +25,7 @@ public final class ResponseBuilder {
         return dtoList;
     }
 
-    public static ResponseDto getFailureMessage(BindingResult result, String message){
+    public static ResponseDto getFailureMessage(BindingResult result, String message) {
         return ResponseDto.builder()
                 .message(message)
                 .status(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -37,7 +36,7 @@ public final class ResponseBuilder {
     }
 
 
-    public static ResponseDto getFailureMessage(HttpStatus status, String message){
+    public static ResponseDto getFailureMessage(HttpStatus status, String message) {
         return ResponseDto.builder()
                 .message(message)
                 .status(status.getReasonPhrase())
@@ -46,7 +45,7 @@ public final class ResponseBuilder {
                 .build();
     }
 
-    public static ResponseDto getSuccessMessage(HttpStatus status, String message, Object content){
+    public static ResponseDto getSuccessMessage(HttpStatus status, String message, Object content) {
         return ResponseDto.builder()
                 .message(message)
                 .status(status.getReasonPhrase())
@@ -55,23 +54,25 @@ public final class ResponseBuilder {
                 .timestamp(new Date().getTime())
                 .build();
     }
-    public static ResponseDto getSuccessMessage(HttpStatus status, String message, Object content, int numberofElement){
+
+    public static ResponseDto getSuccessMessage(HttpStatus status, String message, Object content, int numberOfElement) {
         return ResponseDto.builder()
                 .message(message)
                 .status(status.getReasonPhrase())
                 .content(content)
                 .statusCode(status.value())
-                .numberOfElement(numberofElement)
+                .numberOfElement(numberOfElement)
                 .timestamp(new Date().getTime())
                 .build();
     }
-    public static ResponseDto getSuccessMessage(HttpStatus status, String message, Object content, int numberofElement, int rowCount){
+
+    public static ResponseDto getSuccessMessage(HttpStatus status, String message, Object content, int numberOfElement, int rowCount) {
         return ResponseDto.builder()
                 .message(message)
                 .status(status.getReasonPhrase())
                 .content(content)
                 .statusCode(status.value())
-                .numberOfElement(numberofElement)
+                .numberOfElement(numberOfElement)
                 .rowCount(rowCount)
                 .timestamp(new Date().getTime())
                 .build();

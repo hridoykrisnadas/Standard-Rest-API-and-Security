@@ -18,8 +18,9 @@ import java.util.List;
 public class ProductServiceIMPL implements ProductService {
     private final ProductRepo productRepo;
     private final ModelMapper modelMapper;
+    private int numberOfElement = 0;
 
-    public ProductServiceIMPL(ProductRepo productRepo, ModelMapper modelMapper){
+    public ProductServiceIMPL(ProductRepo productRepo, ModelMapper modelMapper) {
         this.productRepo = productRepo;
         this.modelMapper = modelMapper;
     }
@@ -28,7 +29,8 @@ public class ProductServiceIMPL implements ProductService {
     public ResponseDto save(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
         product = productRepo.save(product);
-        if (product != null){
+
+        if (product != null) {
             return ResponseBuilder.getSuccessMessage(HttpStatus.CREATED, "Product Saved", product);
         }
         return ResponseBuilder.getFailureMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -37,11 +39,11 @@ public class ProductServiceIMPL implements ProductService {
     @Override
     public ResponseDto update(Long Id, ProductDto productDto) {
         Product product = productRepo.findByIdAndIsActiveTrue(Id);
-        if (product != null){
+        if (product != null) {
             modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
             modelMapper.map(productDto, product);
             product = productRepo.save(product);
-            if (product != null){
+            if (product != null) {
                 return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Product Update", product);
             }
             return ResponseBuilder.getFailureMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -52,10 +54,10 @@ public class ProductServiceIMPL implements ProductService {
     @Override
     public ResponseDto delete(Long Id) {
         Product product = productRepo.findByIdAndIsActiveTrue(Id);
-        if (product != null){
+        if (product != null) {
             product.setIsActive(false);
             product = productRepo.save(product);
-            if (product != null){
+            if (product != null) {
                 return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Product Deleted", product);
             }
             return ResponseBuilder.getFailureMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
@@ -66,7 +68,7 @@ public class ProductServiceIMPL implements ProductService {
     @Override
     public ResponseDto getDetails(Long Id) {
         Product product = productRepo.findByIdAndIsActiveTrue(Id);
-        if (product != null){
+        if (product != null) {
             return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Successful", product);
         }
         return ResponseBuilder.getFailureMessage(HttpStatus.NOT_FOUND, "Not Found!!");
@@ -76,15 +78,17 @@ public class ProductServiceIMPL implements ProductService {
     public ResponseDto getAll() {
         List<Product> productList = productRepo.findAllByIsActiveTrue();
         List<ProductDto> productDtoList = this.getProductDtos(productList);
-        return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Successful", productDtoList);
+        numberOfElement = productDtoList.get(0).getClass().getDeclaredFields().length;
+        return ResponseBuilder.getSuccessMessage(HttpStatus.OK, "Successful", productDtoList, numberOfElement, productDtoList.size());
     }
 
-    private List<ProductDto> getProductDtos(List<Product> products){
+    private List<ProductDto> getProductDtos(List<Product> products) {
         List<ProductDto> productDtoList = new ArrayList<>();
         products.forEach(product -> {
             modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
             ProductDto productDto = modelMapper.map(product, ProductDto.class);
             productDtoList.add(productDto);
+
         });
         return productDtoList;
     }

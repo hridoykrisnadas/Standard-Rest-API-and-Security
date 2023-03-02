@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ProductRepo extends JpaRepository<Product, Long> {
     Product findByIdAndIsActiveTrue(Long id);
+
     List<Product> findAllByIsActiveTrue();
 }
