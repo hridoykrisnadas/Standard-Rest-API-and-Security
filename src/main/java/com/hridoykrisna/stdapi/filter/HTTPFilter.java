@@ -19,9 +19,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Enumeration;
 
-@Configuration
-public class HTTPFilter extends OncePerRequestFilter {
-    private final UserService userService;
+//@Configuration
+public class HTTPFilter /*extends OncePerRequestFilter */{
+   /* private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -61,14 +61,17 @@ public class HTTPFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        User user = getUser(request);
+        System.out.println(user.toString());
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+
         try {
-            User user = getUser(request);
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        } catch (Exception e){
+            } catch (Exception e){
             throw new RuntimeException();
         }
         filterChain.doFilter(request, response);
-    }
+    }*/
 }
